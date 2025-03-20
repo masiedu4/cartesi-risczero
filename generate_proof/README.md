@@ -17,43 +17,55 @@ generate_proof/
 ├── Cargo.toml           # Workspace configuration
 ├── host/                # Host program that runs the zkVM
 ├── methods/             # Guest program that runs inside zkVM
-└── rollups.sh           # Script to send proofs to Cartesi Rollups
+├── rollups.sh           # Script to send proofs to Cartesi Rollups
+└── coprocessor.sh       # Script to send proofs to Cartesi Coprocessor
 ```
 
 ## Usage
 
-1. Build and run to generate the proof:
+### 1. Generate a Proof
 
-   ```bash
-   RISC0_DEV_MODE=0 cargo run --release
-   ```
-
-2. Check the generated proof:
-
-   ```bash
-   cat proof_input.json
-   ```
-
-3. Send the proof to a Cartesi Rollups verifier:
-
-   ```bash
-   # Make sure the rollups.sh script is executable
-   chmod +x rollups.sh
-
-   # Make sure the Cartesi Rollups node is running
-   # Then send the proof
-   ./rollups.sh
-   ```
-
-## Development Mode
-
-For faster iteration during development:
+Build and run to generate the zero-knowledge proof:
 
 ```bash
+# For production use
+RISC0_DEV_MODE=0 cargo run --release
+
+# For faster iteration during development
 RUST_LOG="[executor]=info" RISC0_DEV_MODE=1 cargo run
 ```
 
-## Using Bonsai for Remote Proving
+### 2. Check the Generated Proof
+
+```bash
+cat proof_input.json
+```
+
+### 3. Using the Proof with Cartesi
+
+You can send the generated proof to either a Cartesi Rollups verifier or a Cartesi Coprocessor:
+
+#### Option A: Send to Cartesi Rollups
+
+```bash
+# Make sure the script is executable
+chmod +x rollups.sh
+
+# Make sure the Cartesi Rollups node is running
+./rollups.sh
+```
+
+#### Option B: Send to Cartesi Coprocessor
+
+```bash
+# Make sure the script is executable
+chmod +x coprocessor.sh
+
+# Make sure the Cartesi Coprocessor is running
+./coprocessor.sh
+```
+
+## Remote Proving with Bonsai
 
 For production deployments, you can use the Bonsai proving service:
 
@@ -69,17 +81,7 @@ For production deployments, you can use the Bonsai proving service:
    RISC0_DEV_MODE=0 cargo run --release
    ```
 
-## Sending Proofs to Cartesi Rollups
-
-The `rollups.sh` script sends the generated proof to a running Cartesi Rollups verifier:
-
-1. Make sure the Cartesi Rollups verifier is running
-2. Run the script:
-   ```bash
-   ./rollups.sh
-   ```
-
-## Important Note
+## Troubleshooting
 
 If you encounter dependency issues with the RISC Zero toolchain, you may need to pin specific versions of dependencies. For example:
 
