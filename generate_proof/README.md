@@ -16,7 +16,8 @@ This project demonstrates how to create and verify zero-knowledge proofs for age
 generate_proof/
 ├── Cargo.toml           # Workspace configuration
 ├── host/                # Host program that runs the zkVM
-└── methods/             # Guest program that runs inside zkVM
+├── methods/             # Guest program that runs inside zkVM
+└── rollups.sh           # Script to send proofs to Cartesi Rollups
 ```
 
 ## Usage
@@ -28,11 +29,21 @@ generate_proof/
    ```
 
 2. Check the generated proof:
+
    ```bash
    cat proof_input.json
    ```
 
-The proof is saved in `proof_input.json`, which can be used to verify the age requirement without revealing the actual birthdate.
+3. Send the proof to a Cartesi Rollups verifier:
+
+   ```bash
+   # Make sure the rollups.sh script is executable
+   chmod +x rollups.sh
+
+   # Make sure the Cartesi Rollups node is running
+   # Then send the proof
+   ./rollups.sh
+   ```
 
 ## Development Mode
 
@@ -56,6 +67,16 @@ For production deployments, you can use the Bonsai proving service:
 2. Generate the proof:
    ```bash
    RISC0_DEV_MODE=0 cargo run --release
+   ```
+
+## Sending Proofs to Cartesi Rollups
+
+The `rollups.sh` script sends the generated proof to a running Cartesi Rollups verifier:
+
+1. Make sure the Cartesi Rollups verifier is running
+2. Run the script:
+   ```bash
+   ./rollups.sh
    ```
 
 ## Important Note
