@@ -13,4 +13,8 @@ docs/
 # Dotenv file
 .env
 
-contracts/deployment_history
+# Deployment history
+deployment_history/
+deployment_history/**
+./deployment_history/
+deployment_*.json

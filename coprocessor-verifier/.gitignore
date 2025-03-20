@@ -1,3 +1,5 @@
 .cartesi
 target
 d
+contracts/deployment_history/
+deployment_history/
