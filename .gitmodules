@@ -1,0 +1,6 @@
+[submodule "coprocessor-verifier/contracts/lib/forge-std"]
+	path = coprocessor-verifier/contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "coprocessor-verifier/contracts/lib/coprocessor-base-contract"]
+	path = coprocessor-verifier/contracts/lib/coprocessor-base-contract
+	url = https://github.com/Mugen-Builders/coprocessor-base-contract
