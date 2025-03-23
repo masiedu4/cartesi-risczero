@@ -8,14 +8,7 @@ use std::env;
 // This is the image ID of the RISC Zero program we want to verify
 // You should replace this with your own image ID
 const AGE_VERIFY_ID: [u32; 8] = [
-    0x48a22539,
-    0x62c92ee4,
-    0x3eb929c8,
-    0xd930e83d,
-    0xe79c784a,
-    0xe6df700e,
-    0x39566542,
-    0xecd80864
+    0x48a22539, 0x62c92ee4, 0x3eb929c8, 0xd930e83d, 0xe79c784a, 0xe6df700e, 0x39566542, 0xecd80864,
 ];
 
 #[derive(Deserialize)]
@@ -32,10 +25,10 @@ async fn verify_zkp(payload: &str) -> Result<(), Box<dyn std::error::Error>> {
 
     // Debug output
     println!("Received payload length: {} bytes", combined_bytes.len());
-    
+
     // The image ID is 8 u32 values (32 bytes)
     const IMAGE_ID_SIZE: usize = 32;
-    
+
     // Make sure we have enough data
     if combined_bytes.len() <= IMAGE_ID_SIZE {
         return Err("Payload too small to contain receipt and image ID".into());
@@ -53,16 +46,7 @@ async fn verify_zkp(payload: &str) -> Result<(), Box<dyn std::error::Error>> {
         Ok(r) => r,
         Err(e) => {
             println!("Deserialization error: {}", e);
-            // If the first attempt fails, try with a different approach
-            // Sometimes there might be extra data at the beginning
-            if receipt_bytes.len() > 1000 {  // Arbitrary threshold
-                match bincode::deserialize(&receipt_bytes[receipt_bytes.len()/2..]) {
-                    Ok(r) => r,
-                    Err(_) => return Err(format!("Failed to deserialize receipt: {}", e).into())
-                }
-            } else {
-                return Err(format!("Failed to deserialize receipt: {}", e).into());
-            }
+            return Err(format!("Failed to deserialize receipt: {}", e).into());
         }
     };
 
@@ -73,26 +57,26 @@ async fn verify_zkp(payload: &str) -> Result<(), Box<dyn std::error::Error>> {
             let result: bool = receipt.journal.decode()?;
             println!("Verified journal data: {}", result);
             Ok(())
-        },
+        }
         Err(e) => {
             println!("Receipt verification failed: {}", e);
-            
+
             // Try to extract the image ID from the payload and compare
             let extracted_id = if image_id_bytes.len() == 32 {
                 let mut id = [0u32; 8];
                 for i in 0..8 {
-                    let bytes = &image_id_bytes[i*4..(i+1)*4];
+                    let bytes = &image_id_bytes[i * 4..(i + 1) * 4];
                     id[i] = u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]);
                 }
-                
+
                 println!("Extracted image ID: {:?}", id);
                 println!("Expected image ID: {:?}", AGE_VERIFY_ID);
-                
+
                 if id != AGE_VERIFY_ID {
                     return Err("Image ID mismatch".into());
                 }
             };
-            
+
             Err(format!("Receipt verification failed: {}", e).into())
         }
     }
