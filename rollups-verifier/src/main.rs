@@ -48,21 +48,11 @@ async fn verify_zkp(payload: &str) -> Result<(), Box<dyn std::error::Error>> {
     println!("Receipt length: {} bytes", receipt_bytes.len());
     println!("Image ID length: {} bytes", image_id_bytes.len());
 
-    // Try to deserialize with error handling
     let receipt: Receipt = match bincode::deserialize(receipt_bytes) {
         Ok(r) => r,
         Err(e) => {
             println!("Deserialization error: {}", e);
-            // If the first attempt fails, try with a different approach
-            // Sometimes there might be extra data at the beginning
-            if receipt_bytes.len() > 1000 {  // Arbitrary threshold
-                match bincode::deserialize(&receipt_bytes[receipt_bytes.len()/2..]) {
-                    Ok(r) => r,
-                    Err(_) => return Err(format!("Failed to deserialize receipt: {}", e).into())
-                }
-            } else {
-                return Err(format!("Failed to deserialize receipt: {}", e).into());
-            }
+            return Err(format!("Failed to deserialize receipt: {}", e).into());
         }
     };
 
